@@ -11,7 +11,7 @@
 <b>-</b> Para essa atividade, considere selecionar um passo de cada vez de forma aleatória, ou seja, escolha um valor x,y aleatoriamente e vá para ele se possível ou descarte caso seja uma parede. Perigos não são evitados, então, se a posição escolhida for um, enfrente-o. Por fim, a intenção global do problema não é encontrar uma saída, mas sim, tentar consumir o máximo possível de itens até chegar a zerar as possibilidades desse tipo ou morrer tentando.<br>
 
 ## Descrição
-O Algoritmo é baseado no conceito de caminhamento em matrizes de forma gulosa. Esse conceito trabalha de forma que não é possível voltar atrás em decisões já tomadas, e que sempre será escolhido o maior valor para caminhar, ou seja, uma vez que eu já caminhei por uma posição da matriz, eu não posso voltar mais nela, e o objetivo é encontrar o maior valor final possível.<br>
+
 
 ## Resolução do Problema
 Programa feito na linguagem C++.<br>
@@ -25,7 +25,7 @@ Programa feito na linguagem C++.<br>
 <img src="https://github.com/MariRodriguess/O-Caminho-Guloso/blob/aa046bc459b47a820e2bc43dfe601470e53778e2/imgs/arquivo_ex.png"> exemplo_arq
 </p>
 
-- <b>Terminal de comando:</b> Onde é pedido ao usuário para digitar a posição (linha e coluna) pela qual ele quer começar a caminhar na matriz. E onde também é impresso as matrizes com as suas posições caminhadas atualizadas, e também os resultados obtidos.
+- <b>Terminal de comando:</b> Onde é pedido ao usuário para digitar a posição (linha e coluna) pela qual ele quer começar a caminhar na matriz. E onde também é impresso os resultados obtidos.
 
 - Criação do programa: utilizado um notebook Lenovo com sistema operacional Windows 10 (terminal de comando com o software MinGW).
 - Testes do programa: executado no mesmo notebook de criação, e em outros dois computadores diferentes com sistema operacional Linux.
@@ -44,40 +44,6 @@ Na função "ler_andar_matriz", no matriz.cpp, é aberto o arquivo “input.data
 <i>Azul claro:</i> todas as posições da matriz que entrariam na condição apresentada.<br>
 <i>Azul escuro:</i> posição selecionada aleatoriamente, dentro das que cumprem a condição, para exemplificação de possíveis caminhos, utilizando as setas.<br><br>
 
-Na função verificar_matriz, foi criado um IF e três ELSE IF’s (condições), que serão analisados enquanto a matriz estiver sendo caminhada:<br>
-
-<b>1º-</b> Irá verificar se a posição atual da matriz não é a primeira ou última coluna, ou última linha, pois nesse caso será possível caminhar para todos os lados, se algum deles já não tiver sido descoberto (linha 157):
-<p align="center">
-<img src="https://github.com/MariRodriguess/O-Caminho-Guloso/blob/aa046bc459b47a820e2bc43dfe601470e53778e2/imgs/matriz_ex4.png">
-</p>
-
-<br> <b>2º-</b> Irá verificar se está na primeira coluna e não está na última linha, pois nesse caso será possível andar apenas para direita, diagonal direita e baixo (linha 160):
-<p align="center">
-<img src="https://github.com/MariRodriguess/O-Caminho-Guloso/blob/aa046bc459b47a820e2bc43dfe601470e53778e2/imgs/matriz_ex2.png">
-</p>
-
-<br> <b>3º-</b> Irá verificar se está na última coluna e não está na última linha, pois nesse caso será possível andar apenas para esquerda, diagonal esquerda e baixo (linha 163):
-<p align="center">
-<img src="https://github.com/MariRodriguess/O-Caminho-Guloso/blob/aa046bc459b47a820e2bc43dfe601470e53778e2/imgs/matriz_ex3.png">
-</p>
-
-<br> <b>4º-</b> Irá verificar se está na última linha e não está na última coluna, pois nesse caso apenas será possível caminhar para a direita (linha 166):
-<p align="center">
-<img src="https://github.com/MariRodriguess/O-Caminho-Guloso/blob/aa046bc459b47a820e2bc43dfe601470e53778e2/imgs/matriz_ex1.png">
-</p>
-
-Cada um dos If / Else if irá chamar uma função que verifique qual o maior valor dentro dos caminhos possíveis, e se ele já não foi processado, quando o encontrar, a matriz será direcionada para esse caminho e continuará assim até chegar no fim.<br>
-
-Para cada direção (direita, esquerda, abaixo, diagonal direita, diagonal esquerda) há uma função separada, que irá retornar o valor dessa posição, para realizar a soma, e que também irá substituir o elemento dessa posição por ‘-1’, com o objetivo de que a posição se dê como caminhada.<br>
-
-Em casos de valores iguais, foi adotado uma forma para que a matriz sempre seja direcionada para os lugares mais distantes do final. A prioridade ficou nessa ordem: esquerda, direita, diagonal esquerda, abaixo, diagonal direita. <br>
-O exemplo abaixo, com o número ‘58’, mostra esse método na prática. Com a localização atual no [2,3] a opção de caminhar poderia ser para direita [2,4] ou para baixo [3,3], pois é onde tem o maior valor dentre todas as opções possíveis. Seguindo a prioridade, ele foi primeiro para direita, analisou todas as posições novamente, e o ‘58’ era de novo o maior dos valores, então se moveu para baixo. Dessa forma, foi possível pegar os dois ‘58’ e acrescentá-los à soma, caso contrário, se fosse para baixo primeiro, teria deixado de pegar o valor da direita e afetado a soma total, cujo objetivo é ser o maior valor possível:<br>
-<p align="center">
-<img src="https://github.com/MariRodriguess/O-Caminho-Guloso/blob/aa046bc459b47a820e2bc43dfe601470e53778e2/imgs/repeticao_ex.png">
-</p>
-
-Quando chegar ao fim de uma matriz, será printado o resultado do caminho e a sua soma, para então fazer a leitura da próxima e chamar todas as mesmas funções.
-Assim sendo, o programa irá fazer a leitura de cada uma das matrizes contidas no arquivo, e caminhar por todas elas utilizando a forma gulosa.
 
 ## Exemplo de execução:
 <p align="center">
