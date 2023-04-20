@@ -1,9 +1,9 @@
 #ifndef JOGO_HPP
 #define JOGO_HPP
-//#include <ctime>
-#include <fstream>
 #include <iostream>
 #include <string>
+#include <ctime>
+#include <fstream>
 #include <stdlib.h>
 #include <sstream> 
 #include <tuple> 
@@ -49,13 +49,11 @@ class Jogo {
         void ler_inputdata_e_criar_arq(unsigned short int  inicio_matriz, unsigned short int fim_matriz, string endereco_matriz);
         void recarregar_matriz(string** matriz, unsigned short int tamanho, string endereco);
         void atualizar_arq(string** matriz, unsigned short int  tamanho, string endereco);
-        void imprimir_matriz (string** matriz, unsigned short int  tamanho);
         void caminhar_matriz(string** matriz, unsigned short tamanho, unsigned short &linha, unsigned short &coluna, string endereco_m, unsigned short int aux_rodada, string endereco_h);
         bool verificar_parede(string** matriz, unsigned short int posicao, unsigned short int x, unsigned short int y);
         void atualizar_dados(string** matriz, unsigned short int lin, unsigned short int col);
         tuple<unsigned short int, unsigned short int> verificar_parada(string endereco, unsigned short int tamanho);
         void criar_historico(string** matriz, unsigned short int tamanho, string endereco, unsigned short int contador,unsigned short int cont);
-        void exibir_historico(string endereco_h);
         void iniciar_partida (string** matriz, unsigned short int tamanho, unsigned short int quantidade);
         void deletar_arquivo(string endereco);
         bool verificar_possibilidade(unsigned short int x, unsigned short int y, unsigned short int andar);

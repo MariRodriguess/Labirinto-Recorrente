@@ -152,73 +152,45 @@ void Jogo :: atualizar_arq(string** matriz, unsigned short int  tamanho, string 
     arquivoS.close();
 }
 
-/* void Jogo :: imprimir_matriz (string** matriz, unsigned short int tamanho){
-    string verif;
-    for (unsigned short int i=0; i<tamanho; i++){
-        for (unsigned short int j=0; j<tamanho; j++){
-            verif = matriz[i][j];
-            if ((verif[0] == '!') || (verif[0] == '.')){
-                for (int i=1; i<(int)verif.size(); i++){
-                    cout << verif[i];
-                }  
-                cout << " ";
-            }else{
-                cout << matriz[i][j] << " ";
-            }              
-        }   
-        cout << endl;
-    }
-} */
-
 void Jogo :: caminhar_matriz(string** matriz, unsigned short int tamanho, unsigned short int &linha, unsigned short int &coluna, string endereco_m, unsigned short int aux_rodada, string endereco_h){
     unsigned short int x=linha, y=coluna, direcao=0, parada_individual=1;
     bool verif_redor=false, verif_parede=false, verif_possibilidade=false;
     random_device rd; 
     mt19937 gen(rd());  
 
-    //nesse if é tratado a posicao inicial escolhida, será gerado outra aleatoriamente até que ela seja diferente de parede
+    //nesse if é tratado a posicao inicial escolhida
     uniform_int_distribution <> inicio(0, tamanho-1);
     if((matriz[linha][coluna] == "#") || (matriz[linha][coluna] == ".#") || (coluna == (tamanho-1)) || (linha == (tamanho-1))){
         while(verif_redor==false){
             while((matriz[linha][coluna] == "#") || (matriz[linha][coluna] == ".#") || (coluna == (tamanho-1)) || (linha == (tamanho-1))){
-                linha = inicio(gen); //recebendo linha gerada aleatoriamente
-                coluna = inicio(gen); //recebendo coluna gerada aleatoriamente
+                linha = inicio(gen); //recebe linha gerada aleatoriamente
+                coluna = inicio(gen); //recebe coluna gerada aleatoriamente
             }
             verif_redor = verificar_ao_redor(matriz, linha, coluna);
-        } 
-        //cout << "\nA posicao inicial selecionada é uma parede em uma das matrizes, foi gerado uma nova posicao aleatoriamente para o inicio. ";
-        //cout << "\n-> Nova posicao inicial = matriz[" << linha+1 << "][" << coluna+1 << "]" << endl << endl;            
-    }else{
-        if (aux_rodada == 0){ //se for a primeira vez que estou vendo a matriz
-        verif_redor = verificar_ao_redor(matriz, linha, coluna);
-        cout << "\nVerif: " << verif_redor;
+        }           
+    }else{ //nesse if é tratado o caso da posicao inicial ser cercada por paredes
+        if (aux_rodada == 0){ //se for a primeira vez que a matriz está sendo processada
+            verif_redor = verificar_ao_redor(matriz, linha, coluna);
             if (verif_redor==false){
                 while(verif_redor==false){
                     do{
-                        linha = inicio(gen); //recebendo linha gerada aleatoriamente
-                        coluna = inicio(gen); //recebendo coluna gerada aleatoriamente
+                        linha = inicio(gen); //recebe linha gerada aleatoriamente
+                        coluna = inicio(gen); //recebe coluna gerada aleatoriamente
                     }while((matriz[linha][coluna] == "#") || (matriz[linha][coluna] == ".#") || (coluna == (tamanho-1)) || (linha == (tamanho-1)));
                     verif_redor = verificar_ao_redor(matriz, linha, coluna);
                 } 
-                //cout << "\nA posicao inicial selecionada está cercada de paredes, foi gerado uma nova posicao aleatoriamente para o inicio para que você não fique preso. ";
-                //cout << "\n-> Nova posicao inicial = matriz[" << linha+1 << "][" << coluna+1 << "]" << endl << endl;
             }
         }    
     } 
-    if ((x!=linha) || (y!=coluna)){
-        string m1 = "\n[!!!] NOVA POSICAO INICIAL GERADA E DEFINIDA = [" + to_string(linha+1) + "][" + to_string(coluna+1) + "]\n";
+    if ((x!=linha) || (y!=coluna)){ //mostra uma possivel alteração da posição inicial no historico
+        string m1 = "\n[!!!] NOVA POSICAO INICIAL GERADA E DEFINIDA = [" + to_string(linha+1) + "][" + to_string(coluna+1) + "]\n\n";
         escrever_historico(endereco_h, m1);
     }
-    x=linha;
+    x=linha; //atualiza as variaveis x=linha e y=coluna para andar na matriz
     y=coluna;
-  
-      
     atualizar_dados(matriz, x, y); //atualiza os dados da posicao inicial (tira vida ou aumenta inventario, e coloca as posicoes como caminhadas)
-    /* imprimir_matriz(matriz, tamanho);
-    cout << "Vida: " << getVida();
-    cout << "\nInventario: " << getInventario() << endl << endl; */
 
-    if (getInventario() == 4){
+    if (getInventario() == 4){ 
         if (getVida() == 10){
             setInventario(0);
         }else{
@@ -226,12 +198,12 @@ void Jogo :: caminhar_matriz(string** matriz, unsigned short int tamanho, unsign
             setInventario(0);
         }    
     }
-    if (aux_rodada == 1){ //se nao for a primeira vez que estou vendo a matriz
+    if (aux_rodada == 1){ //se NAO for a primeira vez que a matriz está sendo processada
         auto aux_verificar_parada = verificar_parada(endereco_m, tamanho);
         parada_individual = get<0>(aux_verificar_parada);
     }
     if (parada_individual != 0){ //se a matriz ja nao tiver sido zerada
-        uniform_int_distribution <> gerar(1, 8);
+        uniform_int_distribution <> gerar(1, 8); //8 possiveis posicoes para caminhar
         while(getVida() > 0){
             direcao=0;
 
@@ -239,8 +211,8 @@ void Jogo :: caminhar_matriz(string** matriz, unsigned short int tamanho, unsign
                 break;
             }
             do{
-                direcao = gerar(gen); //gerando posicao aleatoria para caminhar
-                verif_possibilidade = verificar_possibilidade(x, y, direcao); //verificar se é possivel caminhar ou se vou acessar uma posicao que nao existe
+                direcao = gerar(gen); //gera uma posicao aleatoria para caminhar
+                verif_possibilidade = verificar_possibilidade(x, y, direcao); //verificar se é possivel caminhar ou se irá ser acessada uma posicao que nao existe
                 if (verif_possibilidade == true){
                     verif_parede = verificar_parede(matriz, direcao, x, y); //se for possivel caminhar, verificar se nao é parede e atualizar os dados caso nao for
                 }
@@ -268,10 +240,6 @@ void Jogo :: caminhar_matriz(string** matriz, unsigned short int tamanho, unsign
                 y++;
             }
 
-            /* imprimir_matriz(matriz, tamanho);
-            cout << "Vida: " << getVida();
-            cout << "\nInventario: " << getInventario() << endl << endl;  */
-
             if (getInventario() == 4){
                 if (getVida() == 10){
                     setInventario(0);
@@ -296,12 +264,12 @@ bool Jogo :: verificar_possibilidade(unsigned short int x, unsigned short int y,
             livre = true;
         }
     }
-    else if ((direcao==2) || (direcao==3)){ //para cima e diagonal direita acima bão pode estar na primeira linha
+    else if ((direcao==2) || (direcao==3)){ //para cima e diagonal direita acima não pode estar na primeira linha
         if (x!=0){
             livre=true;
         }
     }
-    else if ((direcao==4) || (direcao==6)){ //para esquerda ou diagonal esquerda abaixo não pod estar na primeira coluna
+    else if ((direcao==4) || (direcao==6)){ //para esquerda ou diagonal esquerda abaixo não pode estar na primeira coluna
         if (y!=0){
             livre=true;
         }
@@ -360,44 +328,43 @@ bool Jogo :: verificar_parede(string** matriz, unsigned short int direcao, unsig
     if ((verif != "#") && (verif != ".#")){ //se for diferente de parede, atualizar os dados
         atualizar_dados(matriz, lin, col);
         setCaminhos(this->getCaminhos()+1); 
-        return true;
+        return true; //retornar que é possível caminhar
     }else{
         matriz[lin][col] = ".#"; //atualizar como posição caminhada
-        return false;
+        return false; //retornar que NAO é possivel caminhar
     }
 }
 
 bool Jogo :: verificar_ao_redor(string** matriz, unsigned short int  x, unsigned short int  y){
 
-    bool livre=false;
+    bool livre=true;
     string dce, c, ddc, e, d, deb, b, ddb;
     
     if ((x!=0) && (y!=0)){
         dce=matriz[x-1][y-1], c=matriz[x-1][y], ddc=matriz[x-1][y+1], e=matriz[x][y-1], d=matriz[x][y+1], deb=matriz[x+1][y-1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
-        if ((dce!="#") || (dce!=".#") || (c!="#") || (c!=".#") || (ddc!="#") || (ddc!=".#") || (e!="#") || (e!=".#") || (d!="#") || (d!=".#") || (deb!="#") || (deb!=".#")|| (b!="#") || (b!=".#")|| (ddb!="#") || (ddb!=".#")){
-            livre=true;
+        if (((dce=="#")||(dce==".#")) && ((c=="#")||(c==".#")) && ((ddc=="#")||(ddc==".#")) && ((e=="#")||(e==".#")) && ((d=="#")||(d==".#")) && ((deb=="#")||(deb==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#"))){
+            livre=false;
             cout << "\nok1";
         }
     }
     else if ((x==0) && (y==0)){
         d=matriz[x][y+1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
-        if (((d!="#") || (b!="#") || (ddb!="#")) && ((d!=".#") || (b!=".#") || (ddb!=".#"))){
-            livre=true;
+        if (((d=="#")||(d==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#")) ){
+            livre=false;
             cout << "\nok2";
         }
     }    
-    
     else if ((x==0) && (y!=0)){
         e=matriz[x][y-1], d=matriz[x][y+1], deb=matriz[x+1][y-1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
-        if ((e!="#") || (e!=".#") || (d!="#") || (d!=".#") || (deb!="#") || (deb!=".#")|| (b!="#") || (b!=".#")|| (ddb!="#") || (ddb!=".#")){
-            livre=true;
+        if (((e=="#")||(e==".#")) && ((d=="#")||(d==".#")) && ((deb=="#")||(deb==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#"))){
+            livre=false;
             cout << "\nok3";
         }
     }
     else if ((y==0) && (x!=0)){
         c=matriz[x-1][y], ddc=matriz[x-1][y+1], d=matriz[x][y+1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
-        if ((c!="#") || (c!=".#") || (ddc!="#") || (ddc!=".#")|| (d!="#") || (d!=".#") || (b!="#") || (b!=".#")|| (ddb!="#") || (ddb!=".#")){
-            livre=true;
+        if (((c=="#")||(c==".#")) && ((ddc=="#")||(ddc==".#")) && ((d=="#")||(d==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#"))){
+            livre=false;
             cout << "\nok4";
         }
     }
@@ -417,13 +384,13 @@ void Jogo :: atualizar_dados(string** matriz, unsigned short int lin, unsigned s
         setVida(getVida()-1);
         setPerigos(getPerigos()+1);
     }else{
-        if (verif[0] == '!'){ //se for elementos 
+        if (verif[0] == '!'){ //se for elementos já vistos anteriormente
             for (int i=1; i<(int)verif.size(); i++){
-                novo_elemento = verif[i];
+                novo_elemento = verif[i]; //pega o elemento sem a marcação da exclamação
             }
             aux_elemento = atoi(novo_elemento.c_str());  
         }else{
-            aux_elemento = atoi(verif.c_str());
+            aux_elemento = atoi(verif.c_str()); //se nao apenas pega o elemento
         }
         if (aux_elemento > 0){ //se os elementos puderem ser pegos (forem maior que zero)
             aux_elemento-= 1;
@@ -493,38 +460,20 @@ void Jogo :: criar_historico(string** matriz, unsigned short int tamanho, string
     arquivoS.close();
 }
 
-void Jogo :: exibir_historico(string endereco_h){    
-    ifstream arquivo;
-    string linha, aux;
-
-    arquivo.open(endereco_h, ios::in);
-    if (!arquivo){
-        cout << "\nErro ao abrir arquivo.\n";
-    }
-    while (getline(arquivo, linha)) {
-        aux = linha;
-        for (int i=0; i<(int)aux.size(); i++){
-            if ((aux[i] == '.') && (aux[i+1] == '*')){
-                cout << "!";
-            }else if ((aux[i]=='.') && (aux[i+1]=='#')){
-                //imprimir apenas o #
-            }
-            else{
-                cout << aux[i];
-            }
-        }    
-        cout << "\n";
-    }
-    arquivo.close();
-}
-
 void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsigned short int quantidade){
     string endereco_matrizes, endereco_h = "dataset/historico.data";
     unsigned short int linha=0, coluna=0, cont=1, cont1=1, parada_total=1, parada_individual=1, contador=0, condicao=0, i=0;
-    unsigned short int inicio_matriz=1, fim_matriz=tamanho, faltantes=0, percorridos=0, aux=0, aux_inicio=1, opcao=0;
+    unsigned short int inicio_matriz=1, fim_matriz=tamanho, faltantes=0, percorridos=0, aux=0, aux_inicio=1;
+
+    ofstream historico; //para caso o historico ja exista, os dados serem apagados
+    historico.open(endereco_h, ios::out);
+    historico.close();
+
+    escrever_historico(endereco_h, "=========[INDICATIVOS]=========\n\n->POSICOES MARCADAS COM '!' = Posições percorridas que continham elementos de vida.\n\n->POSICOES MARCADAS COM '.' = Posições percorridas, no caso de perigos, e posiçoes descobertas, no caso de paredes.\n\n");
+    escrever_historico(endereco_h, "->POSICOES INICIAIS QUE:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\n   Serao substituidas por outras posicoes geradas aleatoriamente.\n\n=========[INDICATIVOS]========\n");
 
     cout << "\t\t\t\t====[START]====\t\t\n\n";
-    cout << "\nPosicoes iniciais que forem parede, forem a última linha ou última coluna ou estiverem cercadas por parede, serao substituidas por outras posicoes geradas aleatoriamente.";
+    cout << "POSICOES INICIAIS QUE:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\nSerao substituidas por outras posicoes geradas aleatoriamente.\n\n";
     do{ //inserindo linha e coluna inicial
         if (aux==1){
             cout << "\nTamanho inválido. Permitido de 1 até " << tamanho << ". Tente novamente.";
@@ -535,17 +484,8 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
         cin >> coluna;
         aux=1;
     }while((linha>tamanho) || (linha<=0) || (coluna>tamanho) || (coluna<=0));
-    linha-=1;
+    linha-=1; //para que comece a percorrer a partir do zero
     coluna-=1;
-
-   // string aviso = "Posicoes iniciais que:\n -Forem parede;\n -Estiverem cercadas por paredes;\n -Forem a última linha ou última coluna;\nSerao substituidas por outras posicoes geradas aleatoriamente.";
-    //escrever_historico(endereco_h, aviso);
-    //string informacoes = ;
-    
-    escrever_historico(endereco_h, "=========[INDICATIVOS]=========\n\n->POSICOES MARCADAS COM '!' = Posições percorridas que continham elementos de vida.\n\n->POSICOES MARCADAS COM '.' = Posições percorridas, no caso de perigos, e posiçoes descobertas, no caso de paredes.\n");
-    escrever_historico(endereco_h, "->POSICOES INICIAIS QUE:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\n   Serao substituidas por outras posicoes geradas aleatoriamente.\n\n=========[INDICATIVOS]========");
-    //escrever_historico(endereco_h, "Posicoes iniciais que:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\nSerao substituidas por outras posicoes geradas aleatoriamente.\n====[INDICATIVOS]====");
-    
 
     while((getVida() > 0) && (parada_total!=0)){ //enquanto a vida for maior que zero ou os elementos totais por onde foi caminhado for diferente de zero
         endereco_matrizes = "dataset/matriz" + to_string(cont) + ".data";
@@ -557,20 +497,12 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
             ler_inputdata_e_criar_arq(inicio_matriz, fim_matriz, endereco_matrizes);
             recarregar_matriz(matriz, tamanho, endereco_matrizes); 
             criar_historico(matriz, tamanho, endereco_h, 0, cont);   
-            cout << "\nCaminhando: " << i;
             caminhar_matriz(matriz, tamanho, linha, coluna, endereco_matrizes, 0, endereco_h);
             criar_historico(matriz, tamanho, endereco_h, contador+1, cont);
-            /* if (mudanca_posicao_inicial == 1){
-                string m1 = "\nNOVA POSICAO SELECIONADA = [" + to_string(linha+1) + "][" + to_string(coluna+1) + "]";
-                escrever_historico(endereco_h, m1);
-                mudanca_posicao_inicial=0;
-            } */
         }else{
             recarregar_matriz(matriz, tamanho, endereco_matrizes);
             auto aux_verificar_parada = verificar_parada(endereco_matrizes, tamanho);
             parada_individual = get<0>(aux_verificar_parada);
-            //cout << "\nParada indivual: " << parada_individual << endl;
-            cout << "\nCaminhando: " << i;
             caminhar_matriz(matriz, tamanho, linha, coluna, endereco_matrizes, 1, endereco_h);
             criar_historico(matriz, tamanho, endereco_h, contador+1, cont);
         }
@@ -592,7 +524,7 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
         contador++;
     } 
 
-    if (contador>=quantidade){ //verificando se toda matriz do input data foi percorrida
+    if (contador>=quantidade){ //verifica se toda matriz do input data foi percorrida
         condicao = quantidade+1;
     }else{
         condicao = contador+1;
@@ -603,54 +535,83 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
         recarregar_matriz(matriz, tamanho, endereco_matrizes);
         auto verificar = verificar_parada(endereco_matrizes, tamanho);
         faltantes += get<0>(verificar);
-        percorridos += get<1>(verificar);
-        cont1++;   
+        percorridos += get<1>(verificar);   
         deletar_arquivo(endereco_matrizes);
+        cont1++;
     }
-    //cout << "\nPercorridos: " << percorridos;
-    //cout << "\nSoma: " << faltantes << endl;
+    unsigned short int nao_percorridos = ((tamanho*tamanho*quantidade) - percorridos);
+
     for (int i = 0; i < tamanho; i++) {
         delete[] matriz[i];
     }
     delete[] matriz;
-    unsigned short int nao_percorridos = ((tamanho*tamanho*quantidade) - percorridos);
 
-    if ((getVida()==0) && (faltantes!=0)){
-        cout << "\n __________________________________________________________________________________________\n|";
-        cout << "\t\t\t\t====[NAO FOI DESSA VEZ]====\t\t\t\t   |\n\n";
-        cout << "\tSuas vidas acabaram antes do objetivo ser concluido... :(\n";
-        cout << "|__________________________________________________________________________________________|\n";
-    }else if (faltantes==0){
-        cout << "\n __________________________________________________________________________________________\n|";
-        cout << "\t\t\t\t====[PARABENS!!]====\t\t\t\t           |\n\n";
-        cout << "  Voce conseguiu capturar todos os elementos por onde passou no labirinto e venceu o jogo!\n";
-        cout << "|__________________________________________________________________________________________|\n";
-    }
-
-    cout << "\n __________________________________________________________________________________________\n|";
-    cout << "\t\t\t\t====[RESULTADOS FINAIS]====\t\t\t\t   |\n";
-    cout << "\n  'Vida -> " << getVida();
-    cout << "\n  'Inventario -> " << getInventario();
-    cout << "\n  'Perigos encontrados -> " << getPerigos();
-    cout << "\n  'Elementos consumidos -> " << getConsumo();
-    cout << "\n  'Quantidades de vezes caminhada -> " << getCaminhos();
-    cout << "\n  'Caminhos totais descobertos -> " << percorridos;
-    cout << "\n  'Caminhos nao descobertos -> " << nao_percorridos;
-    cout << "\n  'Elementos restantes para zerar os caminhos percorridos -> " << faltantes; 
-    cout << "\n\n\t\t\t\t====[ATE A PROXIMA AVENTURA!]====\n";
-    cout << "|__________________________________________________________________________________________|\n\n";
+    string divisoria1="\n\t\t\t   __________________________\t\n", divisoria2="\t\t\t   __________________________\t\n";
     
-    cout << "\nVoce deseja visualizar o historico resumido de cada rodada do jogo? Digite o numero da opcao:\n1-Sim\n2-Nao\n-> ";
-    cin >> opcao;
-    if (opcao==1){
-        cout << "\t\t\t\t====[EXIBINDO HISTORICO]====\t\t\t\t\n\n";
-        cout << "\n-> OBSERVACAO: As posicoes caminhadas estao marcadas com '!' para uma melhor visualizacao. \n\n";
-        exibir_historico(endereco_h);
-        deletar_arquivo(endereco_h);
-    }else{
-        deletar_arquivo(endereco_h);
+    if ((getVida()==0) && (faltantes!=0)){
+        string txt1, txt2;
+        cout<<"\n __________________________________________________________________________________________\n|";
+        escrever_historico(endereco_h, divisoria1);
+        txt1="\t\t\t\t====[NAO FOI DESSA VEZ]====\t\t\t\t    \n\n";
+        cout << txt1;
+        escrever_historico(endereco_h, txt1);
+        txt2="\tSuas vidas acabaram antes do objetivo ser concluido... :(\n";
+        cout << txt2;
+        escrever_historico(endereco_h, txt2);
+        escrever_historico(endereco_h, "\t\t\t   __________________________\t\n");
+        cout<<"|__________________________________________________________________________________________|\n";
+        
+    }else if (faltantes==0){
+        string txt3, txt4;
+        cout<<"\n __________________________________________________________________________________________\n|";
+        escrever_historico(endereco_h, divisoria1);
+        txt3="\t\t\t\t====[PARABENS!!]====\t\t\t\t           |\n\n";
+        cout << txt3;
+        escrever_historico(endereco_h, txt3);
+        txt4="  Voce conseguiu capturar todos os elementos por onde passou no labirinto e venceu o jogo!\n";
+        cout << txt4;
+        escrever_historico(endereco_h, txt4);
+        escrever_historico(endereco_h, divisoria2);
+        cout<<"|__________________________________________________________________________________________|\n";
     }
-    cout << "\nFim do programa.";
+
+    string txt5, txt6, txt7, txt8, txt9, txt10, txt11, txt12, txt13, txt14, txt15;
+
+    cout<<"\n __________________________________________________________________________________________\n|";
+    escrever_historico(endereco_h, divisoria1);
+    txt5="\t\t\t\t====[RESULTADOS FINAIS]====\t\t\t\t   \n";
+    cout << txt5;
+    escrever_historico(endereco_h, txt5);
+    txt6="\n  'Vida -> " + to_string(getVida());
+    cout << txt6;
+    escrever_historico(endereco_h, txt6);
+    txt7="\n  'Inventario -> " + to_string(getInventario());
+    cout << txt7;
+    escrever_historico(endereco_h, txt7);
+    txt8="\n  'Perigos encontrados -> " + to_string(getPerigos());
+    cout << txt8;
+    escrever_historico(endereco_h, txt8);
+    txt9="\n  'Elementos consumidos -> " + to_string(getConsumo());
+    cout << txt9;
+    escrever_historico(endereco_h, txt9);
+    txt10="\n  'Quantidades de vezes caminhada -> " + to_string(getCaminhos());
+    cout << txt10;
+    escrever_historico(endereco_h, txt10);
+    txt11= "\n  'Caminhos totais descobertos -> " + to_string(percorridos);
+    cout << txt11;
+    escrever_historico(endereco_h, txt11);
+    txt12="\n  'Caminhos nao descobertos -> " + to_string(nao_percorridos);
+    cout << txt12;
+    escrever_historico(endereco_h, txt12);
+    txt13="\n  'Elementos restantes para zerar os caminhos percorridos -> " + to_string(faltantes); 
+    cout << txt13;
+    escrever_historico(endereco_h, txt13);
+    txt14="\n\n\t\t\t\t====[ATE A PROXIMA AVENTURA!]====\n";
+    cout << txt14;
+    escrever_historico(endereco_h, txt14);
+    cout<<"|__________________________________________________________________________________________|\n\n";
+    txt15="\t\t\t   _________________________________\t\n";
+    escrever_historico(endereco_h, txt15);
 }
 
 void Jogo :: deletar_arquivo(string endereco){   
@@ -669,6 +630,6 @@ void Jogo :: escrever_historico(string endereco_h, string m1){
     if (!arquivoS){
         cout << "\nErro ao criar arquivo.\n";
     }
-    arquivoS << m1 << endl;
+    arquivoS << m1;
     arquivoS.close();
 }

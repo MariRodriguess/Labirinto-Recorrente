@@ -46,6 +46,7 @@
     "memory": "cpp",
     "functional": "cpp",
     "utility": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "new": "cpp"
   }
 }
