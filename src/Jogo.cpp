@@ -82,26 +82,44 @@ tuple<unsigned short int, unsigned short int> Jogo :: tamanho_quantidade_matriz(
     return make_tuple(tamanho, quantidade);
 }
 
-void Jogo :: ler_inputdata_e_criar_arq(unsigned short int  inicio_matriz, unsigned short int fim_matriz, string endereco_matriz){   
-    string linha, aux_elemento;
-    unsigned short int linha_arq=0;
-
-    ofstream arquivoS;
+void Jogo :: ler_inputdata_e_criar_arq(string** matriz, unsigned short int  inicio_matriz, unsigned short int fim_matriz, unsigned short int cont){   
+    string linha, elemento;
+    unsigned short int linha_arq=0, contador=0, x=0, y=0, cont_linha=0;
+    auto aux = tamanho_quantidade_matriz(); 
+    unsigned short int tamanho = get<0>(aux);
     ifstream arquivoE;
-    arquivoS.open(endereco_matriz, ios::out);
-    arquivoE.open("dataset/input.data", ios::in);
+    ofstream historico;
     
-    if ((arquivoE.is_open()) && (arquivoS.is_open())){
+    arquivoE.open("dataset/input.data", ios::in);
+    historico.open("dataset/historico.data", ios::app);
+    historico << "\nComecando labirinto numero " << cont << ":\n";
+    
+    if ((arquivoE.is_open()) && (historico.is_open())){
         while(getline(arquivoE, linha)){
             if (linha_arq!=0){  
-                if ((linha_arq>=inicio_matriz) && (linha_arq<=fim_matriz)){ //colocando na matriz apenas uma matriz específica que vai ser utilizada
+                if ((linha_arq>=inicio_matriz) && (linha_arq<=fim_matriz)){ //colocando na matriz e no historico apenas uma matriz específica que vai ser utilizada
                     for (int i=0; i<=(int)linha.size(); i++){
                         if ((linha[i] != '\0') && (linha[i] != '\n')){
                             if (linha[i] != ' '){  
-                                aux_elemento += linha[i];
+                                elemento += linha[i];
                             }else{
-                                arquivoS << aux_elemento + " ";
-                                aux_elemento.clear();      
+                                historico << elemento + " ";
+                                matriz[x][y] = elemento;
+                                contador++;
+                                y++;
+
+                                if (y == tamanho){                  
+                                    x++;
+                                    y=0;
+                                    cont_linha++;
+                                    historico << endl;
+                                }
+                                if (cont_linha == tamanho){
+                                    x=0;
+                                    y=0;  
+                                    cont_linha=0;
+                                }
+                                elemento.clear();      
                             }
                         }else{
                             break;
@@ -114,8 +132,10 @@ void Jogo :: ler_inputdata_e_criar_arq(unsigned short int  inicio_matriz, unsign
                 break;
             }
         }
+        historico << "Vida: " << getVida() << endl;
+        historico << "Inventario: " << getInventario() << endl << endl;
         arquivoE.close();
-        arquivoS.close();
+        historico.close();
     }else{
         cout << "\nNao foi possível abrir o arquivo.\n";
     }
@@ -152,7 +172,7 @@ void Jogo :: atualizar_arq(string** matriz, unsigned short int  tamanho, string 
     arquivoS.close();
 }
 
-void Jogo :: caminhar_matriz(string** matriz, unsigned short int tamanho, unsigned short int &linha, unsigned short int &coluna, string endereco_m, unsigned short int aux_rodada, string endereco_h){
+void Jogo :: caminhar_labirinto(string** matriz, unsigned short int tamanho, unsigned short int &linha, unsigned short int &coluna, string endereco_m, unsigned short int aux_rodada, string endereco_h){
     unsigned short int x=linha, y=coluna, direcao=0, parada_individual=1;
     bool verif_redor=false, verif_parede=false, verif_possibilidade=false;
     random_device rd; 
@@ -208,6 +228,8 @@ void Jogo :: caminhar_matriz(string** matriz, unsigned short int tamanho, unsign
             direcao=0;
 
             if ((y==tamanho-1) || (x==tamanho-1)){ //se tiver na ultima coluna ou na ultima linha já irá para a próxima matriz
+               // cout << "\n===[TELETRANSPORTANDO]===\n";
+                escrever_historico(endereco_h,"\n===[TELETRANSPORTANDO]===\n");
                 break;
             }
             do{
@@ -442,13 +464,9 @@ void Jogo :: criar_historico(string** matriz, unsigned short int tamanho, string
     if (!arquivoS){
         cout << "\nErro ao criar arquivo.\n";
     }
-    if(contador==0){
-        arquivoS << "\nComecando labirinto numero " << cont << ":\n";
-    }else{
-        arquivoS << "\n\t===[RODADA NUMERO " << contador << "]===";
-        arquivoS << "\nLabirinto numero " << cont << ":\n";
-    }
-    
+    arquivoS << "\n\t===[RODADA NUMERO " << contador << "]===";
+    arquivoS << "\nLabirinto numero " << cont << ":\n";
+
     for (unsigned short int i=0; i<tamanho; i++){
         for (unsigned short int j=0; j<tamanho; j++){
             arquivoS << matriz[i][j] << " ";
@@ -462,7 +480,7 @@ void Jogo :: criar_historico(string** matriz, unsigned short int tamanho, string
 
 void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsigned short int quantidade){
     string endereco_matrizes, endereco_h = "dataset/historico.data";
-    unsigned short int linha=0, coluna=0, cont=1, cont1=1, parada_total=1, parada_individual=1, contador=0, condicao=0, i=0;
+    unsigned short int linha=0, coluna=0, cont=1, cont1=1, parada_total=1, parada_individual=1, contador=0, condicao=0;
     unsigned short int inicio_matriz=1, fim_matriz=tamanho, faltantes=0, percorridos=0, aux=0, aux_inicio=1;
 
     ofstream historico; //para caso o historico ja exista, os dados serem apagados
@@ -494,19 +512,18 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
             parada_total=1;
         }
         if (aux_inicio==1){ //se for a primeira vez que está lendo cada matriz do input.data
-            ler_inputdata_e_criar_arq(inicio_matriz, fim_matriz, endereco_matrizes);
-            recarregar_matriz(matriz, tamanho, endereco_matrizes); 
-            criar_historico(matriz, tamanho, endereco_h, 0, cont);   
-            caminhar_matriz(matriz, tamanho, linha, coluna, endereco_matrizes, 0, endereco_h);
+            ler_inputdata_e_criar_arq(matriz, inicio_matriz, fim_matriz, cont);
+            //recarregar_matriz(matriz, tamanho, endereco_matrizes); 
+            //criar_historico(matriz, tamanho, endereco_h, 0, cont);   
+            caminhar_labirinto(matriz, tamanho, linha, coluna, endereco_matrizes, 0, endereco_h);
             criar_historico(matriz, tamanho, endereco_h, contador+1, cont);
         }else{
             recarregar_matriz(matriz, tamanho, endereco_matrizes);
             auto aux_verificar_parada = verificar_parada(endereco_matrizes, tamanho);
             parada_individual = get<0>(aux_verificar_parada);
-            caminhar_matriz(matriz, tamanho, linha, coluna, endereco_matrizes, 1, endereco_h);
+            caminhar_labirinto(matriz, tamanho, linha, coluna, endereco_matrizes, 1, endereco_h);
             criar_historico(matriz, tamanho, endereco_h, contador+1, cont);
         }
-        i++;
         parada_total=0;
         parada_total += parada_individual; 
 
@@ -558,7 +575,7 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
         txt2="\tSuas vidas acabaram antes do objetivo ser concluido... :(\n";
         cout << txt2;
         escrever_historico(endereco_h, txt2);
-        escrever_historico(endereco_h, "\t\t\t   __________________________\t\n");
+        escrever_historico(endereco_h, divisoria2);
         cout<<"|__________________________________________________________________________________________|\n";
         
     }else if (faltantes==0){
@@ -594,7 +611,7 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
     txt9="\n  'Elementos consumidos -> " + to_string(getConsumo());
     cout << txt9;
     escrever_historico(endereco_h, txt9);
-    txt10="\n  'Quantidades de vezes caminhada -> " + to_string(getCaminhos());
+    txt10="\n  'Quantidades de vezes caminhadas -> " + to_string(getCaminhos());
     cout << txt10;
     escrever_historico(endereco_h, txt10);
     txt11= "\n  'Caminhos totais descobertos -> " + to_string(percorridos);

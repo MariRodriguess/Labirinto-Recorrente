@@ -46,10 +46,10 @@ class Jogo {
         unsigned short int getnaoPercorridos();
 
         tuple<unsigned short int, unsigned short int> tamanho_quantidade_matriz();
-        void ler_inputdata_e_criar_arq(unsigned short int  inicio_matriz, unsigned short int fim_matriz, string endereco_matriz);
+        void ler_inputdata_e_criar_arq(string** matriz, unsigned short int  inicio_matriz, unsigned short int fim_matriz, unsigned short int cont);
         void recarregar_matriz(string** matriz, unsigned short int tamanho, string endereco);
         void atualizar_arq(string** matriz, unsigned short int  tamanho, string endereco);
-        void caminhar_matriz(string** matriz, unsigned short tamanho, unsigned short &linha, unsigned short &coluna, string endereco_m, unsigned short int aux_rodada, string endereco_h);
+        void caminhar_labirinto(string** matriz, unsigned short tamanho, unsigned short &linha, unsigned short &coluna, string endereco_m, unsigned short int aux_rodada, string endereco_h);
         bool verificar_parede(string** matriz, unsigned short int posicao, unsigned short int x, unsigned short int y);
         void atualizar_dados(string** matriz, unsigned short int lin, unsigned short int col);
         tuple<unsigned short int, unsigned short int> verificar_parada(string endereco, unsigned short int tamanho);

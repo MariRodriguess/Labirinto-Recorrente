@@ -1,0 +1,119 @@
+=========[INDICATIVOS]=========
+
+->POSICOES MARCADAS COM '!' = Posições percorridas que continham elementos de vida.
+
+->POSICOES MARCADAS COM '.' = Posições percorridas, no caso de perigos, e posiçoes descobertas, no caso de paredes.
+
+->POSICOES INICIAIS QUE:
+  -Forem parede;
+  -Estiverem cercadas por paredes;
+  -Forem a última linha ou última coluna;
+   Serao substituidas por outras posicoes geradas aleatoriamente.
+
+=========[INDICATIVOS]========
+
+Comecando labirinto numero 1:
+1 # # * 1 * 1 
+# # 45 * 5 # # 
+3 5 # 2 4 1 # 
+* * 2 1 * 2 3 
+# 1 * 3 4 5 1 
+* # * 4 2 * 4 
+# # # # 1 4 # 
+Vida: 10
+Inventario: 0
+
+
+[!!!] NOVA POSICAO INICIAL GERADA E DEFINIDA = [2][5]
+
+
+===[TELETRANSPORTANDO]===
+
+	===[RODADA NUMERO 1]===
+Labirinto numero 1:
+1 # # * 1 * 1 
+# # 45 * !4 # # 
+3 5 # !1 !3 1 # 
+* .* !1 1 * 2 3 
+.# 1 .* !2 4 5 1 
+.* .# * 4 2 * 4 
+# .# # # 1 4 # 
+Vida: 5
+Inventario: 1
+
+
+Comecando labirinto numero 2:
+1 # 2 # 4 * 1 
+3 5 # 3 3 * 3 
+* 3 5 14 2 * * 
+* 3 # 4 * * 1 
+# # * 5 * 4 0 
+# # 2 * # * 2 
+4 * 4 1 * # # 
+Vida: 5
+Inventario: 1
+
+
+===[TELETRANSPORTANDO]===
+
+	===[RODADA NUMERO 2]===
+Labirinto numero 2:
+1 # 2 # !3 .* 1 
+3 5 # 3 !0 .* !2 
+* 3 5 14 !0 * * 
+* 3 # 4 * * 1 
+# # * 5 * 4 0 
+# # 2 * # * 2 
+4 * 4 1 * # # 
+Vida: 4
+Inventario: 0
+
+
+===[TELETRANSPORTANDO]===
+
+	===[RODADA NUMERO 3]===
+Labirinto numero 1:
+1 .# .# .* !0 .* !0 
+.# .# !44 .* !2 # # 
+3 5 .# !1 !3 1 # 
+* .* !1 1 * 2 3 
+.# 1 .* !2 4 5 1 
+.* .# * 4 2 * 4 
+# .# # # 1 4 # 
+Vida: 1
+Inventario: 1
+
+
+	===[RODADA NUMERO 4]===
+Labirinto numero 2:
+1 # 2 # !2 .* 1 
+3 5 # 3 !0 .* !2 
+* 3 5 14 !0 * * 
+* 3 # 4 * * 1 
+# # * 5 * 4 0 
+# # 2 * # * 2 
+4 * 4 1 * # # 
+Vida: 0
+Inventario: 2
+
+
+			   __________________________	
+				====[NAO FOI DESSA VEZ]====				    
+
+	Suas vidas acabaram antes do objetivo ser concluido... :(
+			   __________________________	
+
+			   __________________________	
+				====[RESULTADOS FINAIS]====				   
+
+  'Vida -> 0
+  'Inventario -> 2
+  'Perigos encontrados -> 13
+  'Elementos consumidos -> 18
+  'Quantidades de vezes caminhada -> 28
+  'Caminhos totais descobertos -> 28
+  'Caminhos nao descobertos -> 70
+  'Elementos restantes para zerar os caminhos percorridos -> 57
+
+				====[ATE A PROXIMA AVENTURA!]====
+			   _________________________________	
