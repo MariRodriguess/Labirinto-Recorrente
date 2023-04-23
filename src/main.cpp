@@ -11,9 +11,8 @@ int main(){
     Jogo* jogo = new Jogo();
     string** matriz;
     unsigned short int tamanho=0, quantidade=0; 
-    float tempo=0;
-
     auto resultado = jogo->tamanho_quantidade_matriz(); 
+    
     tamanho = get<0>(resultado);
     quantidade = get<1>(resultado);
     matriz = new string * [tamanho];
@@ -23,8 +22,8 @@ int main(){
     jogo->iniciar_partida(matriz, tamanho, quantidade);
     
     termino = clock();
-    tempo = (float(termino-inicio) / CLOCKS_PER_SEC);
-    cout << "\nTEMPO DE EXECUCAO: " << tempo << " segundos." << endl;
+    cout << "\nTEMPO DE EXECUCAO: " << (float(termino-inicio) / CLOCKS_PER_SEC) << " segundos.\n" << endl;
+    cout << "\t\t\t\t====[FIM]====\t\t\n\n";
 
     return 0;
 }

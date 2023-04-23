@@ -112,7 +112,6 @@ void Jogo :: ler_inputdata_e_criar_arq(string** matriz, unsigned short int  inic
                                     x++;
                                     y=0;
                                     cont_linha++;
-                                    historico << endl;
                                 }
                                 if (cont_linha == tamanho){
                                     x=0;
@@ -132,7 +131,7 @@ void Jogo :: ler_inputdata_e_criar_arq(string** matriz, unsigned short int  inic
                 break;
             }
         }
-        historico << "Vida: " << getVida() << endl;
+        historico << "\nVida: " << getVida() << endl;
         historico << "Inventario: " << getInventario() << endl << endl;
         arquivoE.close();
         historico.close();
@@ -141,35 +140,43 @@ void Jogo :: ler_inputdata_e_criar_arq(string** matriz, unsigned short int  inic
     }
 }
 
-void Jogo :: recarregar_matriz(string** matriz, unsigned short int tamanho, string endereco){   
+void Jogo :: recarregar_matriz(string** matriz, unsigned short int tamanho, string endereco){
+    
     ifstream arquivoE;
+    int x=0, y=0, cont_linha=0;
+    string linha, elemento;
     arquivoE.open(endereco, ios::in);
-
-    if (arquivoE.is_open()){
-        for (unsigned short int i=0; i<tamanho; i++) {
-            for (unsigned short int j=0; j<tamanho; j++) {
-                arquivoE >> matriz[i][j]; //recarregando a matriz com a matriz que está no arquivo
+    
+    if (arquivoE.is_open()){ //abrindo o arq da matriz 
+        while(getline(arquivoE, linha)){
+            for (int i=0; i<=(int)linha.size(); i++){
+                if ((linha[i] != '\0') && (linha[i] != '\n')){ //para que a matriz não fique com \n ou espaço
+                    if (linha[i] != ' '){  
+                        elemento += linha[i];
+                    }else{
+                        matriz[x][y] = elemento; //carregando a matriz
+                        y++;
+                        if (y == tamanho){                  
+                            x++;
+                            y=0;
+                            cont_linha++;
+                        }
+                        if (cont_linha == tamanho){
+                            x=0;
+                            y=0;  
+                            cont_linha=0;
+                        }
+                        elemento.clear();      
+                    }
+                }else{
+                    break;
+                }
             }
         }
+        arquivoE.close();
     }else{
         cout << "\nNao foi possível abrir o arquivo.\n";
     }
-}
-
-void Jogo :: atualizar_arq(string** matriz, unsigned short int  tamanho, string endereco){
-    ofstream arquivoS;
-    arquivoS.open(endereco, ios::out);
-    if (!arquivoS){
-        cout << "\nErro ao criar arquivo.\n";
-    }
-    arquivoS << endl;
-    for (unsigned short int i=0; i<tamanho; i++){
-        for (unsigned short int j=0; j<tamanho; j++){
-            arquivoS << matriz[i][j] << " "; //colocando a matriz atualizada no arquivo
-        }
-        arquivoS << endl;
-    }
-    arquivoS.close();
 }
 
 void Jogo :: caminhar_labirinto(string** matriz, unsigned short int tamanho, unsigned short int &linha, unsigned short int &coluna, string endereco_m, unsigned short int aux_rodada, string endereco_h){
@@ -219,7 +226,7 @@ void Jogo :: caminhar_labirinto(string** matriz, unsigned short int tamanho, uns
         }    
     }
     if (aux_rodada == 1){ //se NAO for a primeira vez que a matriz está sendo processada
-        auto aux_verificar_parada = verificar_parada(endereco_m, tamanho);
+        auto aux_verificar_parada = verificar_parada(matriz, tamanho);
         parada_individual = get<0>(aux_verificar_parada);
     }
     if (parada_individual != 0){ //se a matriz ja nao tiver sido zerada
@@ -228,8 +235,6 @@ void Jogo :: caminhar_labirinto(string** matriz, unsigned short int tamanho, uns
             direcao=0;
 
             if ((y==tamanho-1) || (x==tamanho-1)){ //se tiver na ultima coluna ou na ultima linha já irá para a próxima matriz
-               // cout << "\n===[TELETRANSPORTANDO]===\n";
-                escrever_historico(endereco_h,"\n===[TELETRANSPORTANDO]===\n");
                 break;
             }
             do{
@@ -238,30 +243,39 @@ void Jogo :: caminhar_labirinto(string** matriz, unsigned short int tamanho, uns
                 if (verif_possibilidade == true){
                     verif_parede = verificar_parede(matriz, direcao, x, y); //se for possivel caminhar, verificar se nao é parede e atualizar os dados caso nao for
                 }
-            }while((verif_parede == false) && (verif_possibilidade == false)); //gerar posicao enquanto for parede e nao for possivel andar
+            }while((verif_possibilidade==false) || ((verif_parede == false) && (verif_possibilidade == true))); //gerar posicao enquanto for parede e nao for possivel andar
 
-            if(direcao==1){ //diagonal esquerda acima
-                x--;
-                y--;
-            }else if(direcao==2){ //cima
-                x--;
-            }else if(direcao==3){ //diagonal direita acima
-                x--;
-                y++;
-            }else if(direcao==4){ //esquerda
-                y--;
-            }else if(direcao==5){ //direita
-                y++;
-            }else if(direcao==6){ //diagonal esquerda abaixo
-                x++;
-                y--;
-            }else if(direcao==7){ //baixo
-                x++;
-            }else if(direcao==8){ //diagonal direita abaixo
-                x++;
-                y++;
-            }
-
+            switch (direcao){
+                case 1: 
+                    x--; //diagonal esquerda acima
+                    y--; 
+                    break;
+                case 2: 
+                    x--; //cima
+                    break;
+                case 3: 
+                    x--; //diagonal direita acima
+                    y++; 
+                    break;
+                case 4: 
+                    y--; //esquerda
+                    break;
+                case 5: 
+                    y++; //direita
+                    break;
+                case 6: 
+                    x++; 
+                    y--; //diagonal esquerda abaixo
+                    break;
+                case 7: 
+                    x++; //baixo
+                    break;
+                case 8: 
+                    x++; 
+                    y++; //diagonal direita abaixo
+                    break;
+            }                       
+    
             if (getInventario() == 4){
                 if (getVida() == 10){
                     setInventario(0);
@@ -270,11 +284,12 @@ void Jogo :: caminhar_labirinto(string** matriz, unsigned short int tamanho, uns
                     setInventario(0);
                 }    
             }
+            direcao=0;
             verif_parede = false; //colocando com falso novamente para as proximas iterações
             verif_possibilidade = false; //colocando com falso novamente para as proximas iterações
         }
     }    
-    atualizar_arq(matriz, tamanho, endereco_m); //substitui o arquivo da matriz pela matriz atualizada
+    atualizar_arq(matriz, tamanho, endereco_m, 0, 0, 0); //substitui o arquivo da matriz pela matriz atualizada
 }
 
 bool Jogo :: verificar_possibilidade(unsigned short int x, unsigned short int y, unsigned short int direcao){
@@ -350,10 +365,14 @@ bool Jogo :: verificar_parede(string** matriz, unsigned short int direcao, unsig
     if ((verif != "#") && (verif != ".#")){ //se for diferente de parede, atualizar os dados
         atualizar_dados(matriz, lin, col);
         setCaminhos(this->getCaminhos()+1); 
-        return true; //retornar que é possível caminhar
+        return true; //retorna que é possível caminhar
     }else{
-        matriz[lin][col] = ".#"; //atualizar como posição caminhada
-        return false; //retornar que NAO é possivel caminhar
+        string novo_elemento = ".#";
+        if (matriz[lin][col].empty() || matriz[lin][col].size() < novo_elemento.size()) {
+            matriz[lin][col].resize(novo_elemento.size()); // Redimensiona a string na posição [lin][col] para ter espaço suficiente
+        }
+        matriz[lin][col] = novo_elemento; //atualiza como posição descoberta
+        return false; //retorna que NAO é possivel caminhar
     }
 }
 
@@ -366,43 +385,38 @@ bool Jogo :: verificar_ao_redor(string** matriz, unsigned short int  x, unsigned
         dce=matriz[x-1][y-1], c=matriz[x-1][y], ddc=matriz[x-1][y+1], e=matriz[x][y-1], d=matriz[x][y+1], deb=matriz[x+1][y-1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
         if (((dce=="#")||(dce==".#")) && ((c=="#")||(c==".#")) && ((ddc=="#")||(ddc==".#")) && ((e=="#")||(e==".#")) && ((d=="#")||(d==".#")) && ((deb=="#")||(deb==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#"))){
             livre=false;
-            cout << "\nok1";
         }
     }
     else if ((x==0) && (y==0)){
         d=matriz[x][y+1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
         if (((d=="#")||(d==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#")) ){
-            livre=false;
-            cout << "\nok2";
+            livre=false;;
         }
     }    
     else if ((x==0) && (y!=0)){
         e=matriz[x][y-1], d=matriz[x][y+1], deb=matriz[x+1][y-1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
         if (((e=="#")||(e==".#")) && ((d=="#")||(d==".#")) && ((deb=="#")||(deb==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#"))){
             livre=false;
-            cout << "\nok3";
         }
     }
     else if ((y==0) && (x!=0)){
         c=matriz[x-1][y], ddc=matriz[x-1][y+1], d=matriz[x][y+1], b=matriz[x+1][y], ddb=matriz[x+1][y+1];
         if (((c=="#")||(c==".#")) && ((ddc=="#")||(ddc==".#")) && ((d=="#")||(d==".#")) && ((b=="#")||(b==".#")) && ((ddb=="#")||(ddb==".#"))){
             livre=false;
-            cout << "\nok4";
         }
     }
     return livre;
 }
 
 void Jogo :: atualizar_dados(string** matriz, unsigned short int lin, unsigned short int col){
-    string novo_elemento;
-    unsigned short int aux_elemento=0;
+    string novo_elemento, str;
+    int aux_elemento=0;
     string verif = matriz[lin][col];
 
     if ((verif == "*") || (verif == ".*")){ //se for perigo
-        if (verif[0] == '*'){
-            novo_elemento = ".*";
-            matriz[lin][col] = novo_elemento; 
-        }    
+        novo_elemento = ".*";
+        matriz[lin][col].resize(novo_elemento.size()); // Redimensiona a string na posição [lin][col] para ter espaço suficiente
+        matriz[lin][col] = novo_elemento;
         setVida(getVida()-1);
         setPerigos(getPerigos()+1);
     }else{
@@ -415,67 +429,15 @@ void Jogo :: atualizar_dados(string** matriz, unsigned short int lin, unsigned s
             aux_elemento = atoi(verif.c_str()); //se nao apenas pega o elemento
         }
         if (aux_elemento > 0){ //se os elementos puderem ser pegos (forem maior que zero)
-            aux_elemento-= 1;
-            novo_elemento = "!" + to_string(aux_elemento);
-            matriz[lin][col] = novo_elemento;
+            aux_elemento-= 1; //subtrai 1 do elemento
+            str = to_string(aux_elemento);
+            novo_elemento = "!" + str; //adciona a marcação de descoberta
+            matriz[lin][col].resize(novo_elemento.size()); // Redimensiona a string na posição [lin][col] para ter espaço suficiente
+            matriz[lin][col] = novo_elemento; //atualiza a posição com o novo elemento
             setConsumo(getConsumo()+1);
             setInventario(getInventario()+1);
         }
     }
-}
-
-tuple<unsigned short int, unsigned short int> Jogo :: verificar_parada(string endereco, unsigned short int tamanho){
-
-    ifstream arquivo;
-    string pular, verif, aux_soma;
-    int aux=0, aux2=0, aux_percorridos=0, soma=0;
-
-    arquivo.open(endereco, ios::in);
-    if (!arquivo){
-        cout << "\nErro ao abrir arquivo.\n";
-    }
-    getline (arquivo, pular, '\n');
-    while (aux<(tamanho*tamanho)){
-        getline(arquivo, verif, ' ');
-        if ((verif[0] == '!') || (verif[0] == '.')){ //se a posicao tiver marcada com ! ou . significada que foi caminhada
-            aux_percorridos++; //somando caminhos percorridos nessa matriz
-            if (verif[0] == '!'){ 
-                for (int i=1; i<(int)verif.size(); i++){
-                    aux_soma += verif[i]; //somando os numeros de todas as posicoes que estão marcadas com ! (foram caminhadas e tinham elementos)
-                }
-                soma += atoi(aux_soma.c_str()); //se a soma for igual a zero, significa que por onde andei zerei todos os elementos e a missão foi cumprida nessa matriz
-                aux_soma = "";
-            }
-        } 
-        if (aux2==tamanho-1){
-            getline(arquivo, pular, '\n');
-            aux2=-1;
-        }
-        aux++;
-        aux2++;
-    }
-    arquivo.close();
-    return make_tuple(soma, aux_percorridos);  
-}
-
-void Jogo :: criar_historico(string** matriz, unsigned short int tamanho, string endereco_h, unsigned short int contador, unsigned short int cont){
-    ofstream arquivoS;
-    arquivoS.open(endereco_h, ios::app);
-    if (!arquivoS){
-        cout << "\nErro ao criar arquivo.\n";
-    }
-    arquivoS << "\n\t===[RODADA NUMERO " << contador << "]===";
-    arquivoS << "\nLabirinto numero " << cont << ":\n";
-
-    for (unsigned short int i=0; i<tamanho; i++){
-        for (unsigned short int j=0; j<tamanho; j++){
-            arquivoS << matriz[i][j] << " ";
-        }
-        arquivoS << endl;
-    }
-    arquivoS << "Vida: " << getVida() << endl;
-    arquivoS << "Inventario: " << getInventario() << endl << endl;
-    arquivoS.close();
 }
 
 void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsigned short int quantidade){
@@ -488,41 +450,40 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
     historico.close();
 
     escrever_historico(endereco_h, "=========[INDICATIVOS]=========\n\n->POSICOES MARCADAS COM '!' = Posições percorridas que continham elementos de vida.\n\n->POSICOES MARCADAS COM '.' = Posições percorridas, no caso de perigos, e posiçoes descobertas, no caso de paredes.\n\n");
-    escrever_historico(endereco_h, "->POSICOES INICIAIS QUE:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\n   Serao substituidas por outras posicoes geradas aleatoriamente.\n\n=========[INDICATIVOS]========\n");
+    escrever_historico(endereco_h, "->POSICÕES INICIAIS QUE:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\n  serao substituidas por outras posicoes geradas aleatoriamente.\n\n=========[INDICATIVOS]========\n");
 
     cout << "\t\t\t\t====[START]====\t\t\n\n";
-    cout << "POSICOES INICIAIS QUE:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\nSerao substituidas por outras posicoes geradas aleatoriamente.\n\n";
+    cout << "POSICÕES INICIAIS QUE:\n  -Forem parede;\n  -Estiverem cercadas por paredes;\n  -Forem a última linha ou última coluna;\nserao substituidas por outras posicoes geradas aleatoriamente.\n\n";
     do{ //inserindo linha e coluna inicial
         if (aux==1){
             cout << "\nTamanho inválido. Permitido de 1 até " << tamanho << ". Tente novamente.";
         }
-        cout << "\n\nPor qual ponto das matrizes voce deseja começar a percorrer? (de 1 até " << tamanho << ")\n\nLinha: ";
+        cout << "\n\nPor qual ponto das matrizes voce deseja começar a percorrer? (de 1 até " << tamanho << ")\nLinha[x]: ";
         cin >> linha;
-        cout << "\nColuna: ";
+        cout << "\nColuna[y]: ";
         cin >> coluna;
         aux=1;
     }while((linha>tamanho) || (linha<=0) || (coluna>tamanho) || (coluna<=0));
-    linha-=1; //para que comece a percorrer a partir do zero
+    linha-=1; //para que o for possa começar no zero
     coluna-=1;
 
-    while((getVida() > 0) && (parada_total!=0)){ //enquanto a vida for maior que zero ou os elementos totais por onde foi caminhado for diferente de zero
+    while((getVida() > 0)){ //enquanto a vida for maior que zero
+        
         endereco_matrizes = "dataset/matriz" + to_string(cont) + ".data";
 
         if (cont==1){
             parada_total=1;
         }
         if (aux_inicio==1){ //se for a primeira vez que está lendo cada matriz do input.data
-            ler_inputdata_e_criar_arq(matriz, inicio_matriz, fim_matriz, cont);
-            //recarregar_matriz(matriz, tamanho, endereco_matrizes); 
-            //criar_historico(matriz, tamanho, endereco_h, 0, cont);   
+            ler_inputdata_e_criar_arq(matriz, inicio_matriz, fim_matriz, cont); 
             caminhar_labirinto(matriz, tamanho, linha, coluna, endereco_matrizes, 0, endereco_h);
-            criar_historico(matriz, tamanho, endereco_h, contador+1, cont);
+            atualizar_arq(matriz, tamanho, endereco_h, contador+1, cont, 1); //atualiza historico
         }else{
             recarregar_matriz(matriz, tamanho, endereco_matrizes);
-            auto aux_verificar_parada = verificar_parada(endereco_matrizes, tamanho);
+            auto aux_verificar_parada = verificar_parada(matriz, tamanho);
             parada_individual = get<0>(aux_verificar_parada);
             caminhar_labirinto(matriz, tamanho, linha, coluna, endereco_matrizes, 1, endereco_h);
-            criar_historico(matriz, tamanho, endereco_h, contador+1, cont);
+            atualizar_arq(matriz, tamanho, endereco_h, contador+1, cont, 1); //atualiza historico
         }
         parada_total=0;
         parada_total += parada_individual; 
@@ -530,11 +491,14 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
         if (quantidade+1>=cont){
             cont++;
         }   
-        if (quantidade+1==cont){
+        if (quantidade+1==cont){ //para voltar a primeira matriz
             cont=1;
             aux_inicio=0;
         } 
-    
+        if ((cont==1) && (parada_total==0)){ // se os elementos totais por onde foi caminhado for zerado
+            break;
+        }
+
         //atualizando a posicao da proxima matriz dentro do input.data
         inicio_matriz = fim_matriz+2; 
         fim_matriz = inicio_matriz+(tamanho-1); 
@@ -550,7 +514,7 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
     while (cont1!=condicao){
         endereco_matrizes = "dataset/matriz" + to_string(cont1) + ".data";
         recarregar_matriz(matriz, tamanho, endereco_matrizes);
-        auto verificar = verificar_parada(endereco_matrizes, tamanho);
+        auto verificar = verificar_parada(matriz, tamanho);
         faltantes += get<0>(verificar);
         percorridos += get<1>(verificar);   
         deletar_arquivo(endereco_matrizes);
@@ -582,8 +546,8 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
         string txt3, txt4;
         cout<<"\n __________________________________________________________________________________________\n|";
         escrever_historico(endereco_h, divisoria1);
-        txt3="\t\t\t\t====[PARABENS!!]====\t\t\t\t           |\n\n";
-        cout << txt3;
+        txt3="\t\t\t\t====[PARABENS!!]====\t\t\t\t           \n\n";
+        cout << "\t\t\t\t====[PARABENS!!]====\t\t\t\t           |\n\n";
         escrever_historico(endereco_h, txt3);
         txt4="  Voce conseguiu capturar todos os elementos por onde passou no labirinto e venceu o jogo!\n";
         cout << txt4;
@@ -593,7 +557,6 @@ void Jogo :: iniciar_partida (string** matriz, unsigned short int tamanho, unsig
     }
 
     string txt5, txt6, txt7, txt8, txt9, txt10, txt11, txt12, txt13, txt14, txt15;
-
     cout<<"\n __________________________________________________________________________________________\n|";
     escrever_historico(endereco_h, divisoria1);
     txt5="\t\t\t\t====[RESULTADOS FINAIS]====\t\t\t\t   \n";
@@ -641,12 +604,90 @@ void Jogo :: deletar_arquivo(string endereco){
     }
 }
 
-void Jogo :: escrever_historico(string endereco_h, string m1){
+void Jogo :: escrever_historico(string endereco_h, string mensagem){
     ofstream arquivoS;
     arquivoS.open(endereco_h, ios::app);
     if (!arquivoS){
         cout << "\nErro ao criar arquivo.\n";
     }
-    arquivoS << m1;
+    arquivoS << mensagem;
     arquivoS.close();
 }
+
+void Jogo :: atualizar_arq(string** matriz, unsigned short int tamanho, string endereco_arq, unsigned short int contador, unsigned short int cont, unsigned short int aux_historico){
+    int exclamacao=0, aux_int=0;
+    string elemento, aux_elemento, str;
+    ofstream arquivoS;
+    if (aux_historico==1){
+        arquivoS.open(endereco_arq, ios::app);
+    }else{
+        arquivoS.open(endereco_arq, ios::out);
+    }
+    
+    if (!arquivoS){
+        cout << "\nErro ao criar arquivo.\n";
+    }else{
+        if (aux_historico==1){
+            arquivoS << "\n\t===[RODADA NUMERO " << contador << "]===";
+            arquivoS << "\nLabirinto numero " << cont << ":\n";
+        }
+        for (int i=0; i<tamanho; i++){
+            for (int j=0; j<tamanho; j++){
+                if (j==0){
+                    elemento = matriz[i][j];
+                    for (int k=0; k<=(int)elemento.size(); k++){
+                        if ((elemento[k] == '!')){
+                            exclamacao=1;
+                        }else{
+                            aux_elemento = aux_elemento + elemento[k];
+                        }
+                    }
+                    if((exclamacao==1) && (i!=0)){
+                        arquivoS << endl;
+                        aux_int = atoi(aux_elemento.c_str());
+                        str = to_string(aux_int);
+                        str = "!" + str;
+                        exclamacao=0;
+                        arquivoS << str;
+                    }else{
+                        arquivoS << matriz[i][j];
+                    }
+                }else{
+                    arquivoS << matriz[i][j];
+                }
+                arquivoS << " ";
+                aux_elemento="";
+            }
+        }
+        if (aux_historico==1){
+            arquivoS << "\nVida: " << getVida() << endl;
+            arquivoS << "Inventario: " << getInventario() << endl << endl;
+        }
+    }        
+    arquivoS.close();
+}
+
+tuple<unsigned short int, unsigned short int> Jogo :: verificar_parada(string** matriz, unsigned short int tamanho){
+
+    string aux_soma, elemento;
+    int soma=0, pontos=0, descobertos=0;
+
+    for (int i=0; i<tamanho; i++){
+        for (int j=0; j<tamanho; j++){
+            elemento = matriz[i][j];
+            if (elemento[0] == '!'){
+                for (int k=1; k<=(int)elemento.size(); k++){
+                    aux_soma += elemento[k];
+                }
+                soma += atoi(aux_soma.c_str());
+                aux_soma = "";
+                pontos++;
+                descobertos++;
+            }
+            else if (elemento[0]=='.'){
+                descobertos++;
+            }
+        }        
+    }
+    return make_tuple(soma, descobertos);
+}    

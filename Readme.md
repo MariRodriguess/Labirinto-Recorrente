@@ -7,7 +7,6 @@
 &nbsp; <b>-</b> Quanto as paredes #, não há muito o que fazer a não ser desviar e continuar a rota. Já os perigos, a cada passada, tende a subtrair 1 de vida de um total de 10. Assim, ao ficar sem pontos de vida o algoritmo deve parar e indicar fim de jogo.<br>
 &nbsp; <b>-</b> Ao decorrer do jogo, a cada passo correto sob uma estrada, o garoto consome um item, subtraindo esse do valor que compõe a posição x,y. Gravando nessa o valor resultante. A cada subtração bem sucedida, essa vai para um banco de vida que cheio (a cada 4 ações bem sucedidas) lhe retorna 1 de vida em seu contador, exceto se a vida já estiver completa (10), nesse caso o banco de vida apenas será zerado e uma nova vida não será retornada. Contudo, pode haver partes do caminho com zero itens, esses devem continuar sendo utilizados, porém, sem computar pontuação.<br>
 &nbsp; <b>-</b> O labirinto deve ser lido do arquivo input.data, o qual apresentará várias matrizes, todas quadráticas. Sua missão é percorrer as matrizes até que todo o caminho percorrido pelo garoto se torne zero ou que ele venha a morrer devido aos perigos enfrentados. <br>
-&nbsp; <b>-</b> Para essa atividade, considere selecionar um passo de cada vez de forma aleatória, ou seja, escolha um valor x,y aleatoriamente e vá para ele se possível ou descarte caso seja uma parede. Perigos não são evitados, então, se a posição escolhida for um, enfrente-o. Por fim, a intenção global do problema não é encontrar uma saída, mas sim, tentar consumir o máximo possível de itens até chegar a zerar as possibilidades desse tipo ou morrer tentando.<br>
 
 ## Estrutura do código
 - Programa feito na linguagem C++.<br>
@@ -15,20 +14,20 @@
 - <b>main.cpp:</b> É criado um ponteiro para uma matriz de string e duas variáveis que irão chamar uma função que retorna o tamanho de cada matriz e quantas existe dentro do arquivo, nesse caso, o “input.data”. Em seguida, será realizada uma alocação dinâmica para a matriz, utilizando o tamanho retornado. Esses três elementos serão passados como parâmetros para as funções e utilizados durante todo o código. Ainda na main, será chamada a função "iniciar_partida", que será responsável por realizar as instruções do código, e também iniciada a função para contar o tempo de execução do código.<br>
 - <b>matriz.hpp:</b> É definida uma classe "Jogo" com todos os atributos necessários no jogo (vida, inventário, perigos, consumo, soma dos caminhos percorridos e soma dos caminhos não percorridos), e também definido todas as funções e bibliotecas utilizadas no código.<br>
 - <b>matriz.cpp:</b> É realizado a inicialização da classe e o desenvolvimento e a chamada de cada função.<br>
-- <b>input.data:</b> Arquivo contendo o tamanho das matrizes e a quantidade existente (na primeira linha) e as próprias matrizes nas linhas seguintes. É importante salientar que a matriz é composta apenas por números inteiros positivos, asteriscos e hashtags, e o seu tamanho é quadrado, ou seja, tem o mesmo número de linhas e colunas. Abaixo um modelo de um arquivo com 2 matrizes 7x7:
+- <b>input.data:</b> Arquivo contendo o tamanho das matrizes e a quantidade existente (na primeira linha) e as próprias matrizes nas linhas seguintes. É importante salientar que a matriz é composta apenas por números inteiros positivos, asteriscos e hashtags, e o seu tamanho é quadrado, ou seja, tem o mesmo número de linhas e colunas. Abaixo um modelo de um arquivo com 2 matrizes 7x7:<br>
 
 <p align="center">
 <img src="https://github.com/MariRodriguess/O-Caminho-Guloso/blob/aa046bc459b47a820e2bc43dfe601470e53778e2/imgs/arquivo_ex.png"> exemplo_arq
 </p>
 
-- <b>Terminal de comando:</b> Onde é pedido ao usuário para digitar a posição (linha e coluna) pela qual ele quer começar a caminhar na matriz. E onde também é impresso os resultados obtidos.
+- <b>Terminal de comando:</b> Onde é pedido ao usuário para digitar a posição (linha e coluna) pela qual ele quer começar a caminhar na matriz. E onde também é impresso os resultados obtidos.<br>
 
-- <b>Criação do programa:</b> utilizado um notebook Lenovo com sistema operacional Windows 10 (terminal de comando com o software MinGW).
-- <b>Testes do programa:</b> executado no mesmo notebook de criação, e em outros dois computadores diferentes com sistema operacional Linux.
+- <b>Criação do programa:</b> utilizado um notebook Lenovo com sistema operacional Windows 10 (terminal de comando com o software MinGW).<br>
+- <b>Testes do programa:</b> executado no mesmo notebook de criação, e em outros dois computadores diferentes com sistema operacional Linux.<br>
 
 ## Decisões de implementação e regras
 ### -> Condições de início do jogo:
-&nbsp; A posição inicial escolhida pelo usuário não poderá ser parede; estar cercada por paredes (assim não seria possível percorrer); ser a última linha ou última coluna da matriz (essas serão as condições de troca de matrizes). Se qualquer uma dessas opções forem atendidas, será gerada aleatoriamente uma nova posição inicial.
+&nbsp; A posição inicial escolhida pelo usuário não poderá ser parede; estar cercada por paredes (assim não seria possível percorrer); ser a última linha ou última coluna da matriz (essas serão as condições de troca de matrizes). Se qualquer uma dessas opções forem atendidas, será gerada aleatoriamente uma nova posição inicial.<br>
 
 ### -> Condições de parada do jogo:
 &nbsp; <b>1-</b> Todo o caminho percorrido que haviam pontos (números) a serem capturados for zerado;<br>
@@ -41,7 +40,7 @@
 
 ### -> Caminhamento:
 &nbsp; Todo caminho a ser percorrido será gerado aleatoriamente, utilizando a combinação de duas classes em C++: classe random_device (fonte de entropia do sistema) e classe mt19937 (aleatoriedade pseudoaleatória). Com elas, será possível gerar uma sequência verdadeiramente aleatória dos números de 1 até 8.<br>
-&nbsp; Cada número representa uma posição:<br>
+&nbsp; Cada número representa uma posição para qual o viajante irá percorrer: <br>
 &nbsp; &nbsp; 1- Diagonal esquerda acima; &nbsp; 2- Acima; &nbsp; 3- Diagonal direita acima;<br>
 &nbsp; &nbsp; 4- Esquerda; &nbsp; 5- Direita;<br>
 &nbsp; &nbsp; 6- Diagonal esquerda abaixo; &nbsp; 7- Abaixo; &nbsp; 8- Diagonal direita abaixo;<br>
@@ -61,42 +60,46 @@
 ### -> Modo que ocorrerá a troca de labirinto
 !!Colocar aqui o teletransporte de matrizes
 
+### -> Observação
+&nbsp; Um arquivo output será gerado com o nome "historico.data" dentro da pasta dataset, para que qualquer usuário consiga acessar e verificar o caminho percorrido pelo viajante e os resultados obtidos.
 
 ## Implementação do código:
-&nbsp; Inicialmente, é aberto o arquivo "input.data" para leitura, e lido o valor do tamanho e da quantidade de labirintos existentes, para ser realizada e alocação dinâmica de uma matriz de string, e chamada a função `iniciar_partida` usando esses três parâmetros.<br>
-&nbsp; Toda vez que ocorrer uma partida e o labirinto for modificado, ele será salvo em um arquivo chamado "historico.data" para que o usuário possa acessá-lo e observar os caminhos percorridos.<br>
-&nbsp; Na função `iniciar_partida`, é verificado se já existe esse arquivo do histórico criado em uma outra compilação, se tiver, ele será limpado e reutilizado para o jogo atual. É também pedido ao usuário para digitar a linha e a coluna inicial, onde o viajante irá começar a percorrer.<br>
-&nbsp; Enquanto as condições de parada citadas não forem atendidas, será analisado duas situações, e realizado alguns procedimentos:<br>
-&nbsp; &nbsp; &nbsp; <b>1-</b> Caso for a primeira vez que um labirinto está sendo acessado, será chamado a função `ler_inputdata`. Nela será aberto o arquivo “input.data” para leitura, e criado um IF para toda vez que encontrar uma linha de um labirinto em específico. Dentro do IF, é realizado manobras para que uma variável auxiliar tipo string receba somente os elementos desse labirinto, sem os espaços ou “\0”. 
+&nbsp; Inicialmente, o arquivo "input.data" é aberto para leitura e os valores do tamanho e quantidade de labirintos são lidos, através da função `tamanho_quantidade_matriz`, para que se possa realizar a alocação dinâmica de uma matriz de string. Em seguida, a função `iniciar_partida` é chamada utilizando esses três parâmetros.<br>
+&nbsp; Cada vez que uma partida é realizada e o labirinto é modificado, ele é salvo no arquivo "historico.data", permitindo que o usuário possa acessá-lo posteriormente e visualizar os caminhos percorridos.<br>
+&nbsp; Na função `iniciar_partida`, verifica-se a existência do arquivo de histórico criado em uma compilação anterior. Caso exista, ele é limpo e reutilizado para a nova partida. É também solicitado para o usuário fornecer as coordenadas iniciais da linha e coluna a partir das quais o viajante iniciará o percurso pelo labirinto. <br>
+&nbsp; Enquanto as condições de parada mencionadas não forem satisfeitas, serão analisadas duas situações distintas e realizados determinados procedimentos.<br>
+&nbsp; &nbsp; &nbsp; <b>1-</b> Caso for a primeira vez que um labirinto está sendo acessado, será chamado a função `ler_inputdata`. Nela será aberto o arquivo “input.data” em modo de leitura, e criado um IF para toda vez que encontrar uma linha de um labirinto em específico. Dentro do IF, é realizado manobras para que uma variável auxiliar tipo string receba somente os elementos desse labirinto, sem os espaços ou “\0”. 
 Quando recebido um elemento, ele é escrito no arquivo de histórico e também passado para a matriz do jogo, e então, a variável é zerada para receber o próximo elemento, até que a matriz seja completamente lida. Como a matriz do jogo será atualizada com os elementos desse arquivo, ela estará pronta para o caminhamento, e cada vez que o labirinto for percorrido pelo viajante pela primeira vez, ele será reescrito em um outro arquivo individual com o nome contendo sua posição dentro do arquivo onde foi pega, por exemplo, "labirinto1.data".<br>
-&nbsp; &nbsp; &nbsp; <b>2-</b> Caso não for a primeira vez, apenas será chamado a função `recarregar_matriz`, que irá acessar o arquivo do labirinto que será percorrido e colocar os dados na matriz do jogo, já que o arquivo individual já existe e não precisa mais ser pego no input.data.<br>
-&nbsp; Sendo assim, só será criado o arquivo do labirinto se ele for percorrido, então caso o viajante morra ainda no primeiro, por exemplo, não será gerado um arquivo para os seguintes.<br>
+&nbsp; &nbsp; &nbsp; <b>2-</b> Caso o labirinto já tiver sido acessado anteriormente, a função `recarregar_matriz` será chamada para ler os dados do arquivo individual e atualizar a matriz do jogo. Nesse caso, como o arquivo individual já existe, ele não precisa ser extraído do "input.data" novamente.<br>
+&nbsp; Assim, só será criado o arquivo do labirinto se ele for percorrido, então caso o viajante morra ainda no primeiro, por exemplo, não será gerado um arquivo para os seguintes.<br>
 &nbsp; Quando a matriz estiver recarregada com os elementos, será chamado a função `caminhar_labirinto`, nela é onde vai ocorrer todo o processo de caminhamento do jogo:<br>
-&nbsp; &nbsp; &nbsp; <b>Primeiro passo:</b> Será analisado se a posição de início cumpre as condições de início do jogo já citadas. Se não cumprirem, será gerado novas posições aleatoriamente. Nesse caso, a posição inicial será atualizada e será escrito essas modificações no "historico.data".<br>
-&nbsp; &nbsp; &nbsp; <b>Segundo passo:</b> Será chamado a função `atualizar_dados` logo para a posição inicial. Essa função é responsável por verificar o elemento da posição atual e fazer as modificações necessárias.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Se o elemento for um perigo, será subtraído 1 da vida do viajante e marcado essa posição com ". *" na matriz, para que ela se dê como descoberta.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Se o elemento for um ponto (número) a ser computado, e ele for maior que zero, será adicionado 1 ao inventário do viajante e subtraído 1 do ponto, além de ser concatenado uma "!" em frente ao número para que essa posição da matriz se dê como descoberta, por exemplo, o elemento "4" se transformaria em "!3" após o caminhamento. Caso o número seja igual a zero, apenas será marcado a posição.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Se o elemento for uma parede, será atualizado essa posição com ".#" , para que ela também se dê como descoberta.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Caso o elemento já tenha sido descoberto anteriormente, e consequentemente tenha uma marcação de "." ou "!", será lido apenas o valor da frente da marcação e realizado as respectivas modificações.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; Ou seja, a posição inicial selecionada já poderá retirar vida ou adicionar pontos ao inventário.<br>
-&nbsp; &nbsp; &nbsp; <b>Terceiro passo:</b> Com a posição inicial já verificada e atualizada, será processado o restante do labirinto. Para isso, foi feito um loop (while) que vai ocorrer até que as condições de troca de labirinto ou as condições de parada não sejam atendidas. Nesse loop terá os seguintes procedimentos: <br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Será analisado se está na última linha ou última coluna, nesse caso o loop já será encerrado para que o viajante possa ser teletransportado para o próximo labirinto. Caso contrário, o loop irá continuar normalmente com os próximos tópicos.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Dentro de um do while, será gerado uma posição aleatória para o viajante caminhar, e só irá sair desse loop quando a posição gerada for realizável, ou seja, se não for uma posição que não existe na matriz e não for uma parede, para isso, será utilizado as funções `verif_possibilidade` e `verif_parede`.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Quando for gerado uma posição que possa ser caminhada, será chamada novamente a função `atualizar_dados`, e em seguida atualizado a linha e a coluna do labirinto para aquela posição.<br>
-&nbsp; &nbsp; &nbsp; &nbsp; -> Nas últimas linhas do while será conferido se o inventário está com 4 pontos e a vida do viajante não é 10, se sim, será adicionado 1 a vida, e o loop irá continuar.<br>
-&nbsp; &nbsp; &nbsp; <b>Quarto passo:</b> Agora com o labirinto já percorrido, ou seja, alguma das condições de parada/teletransporte foram cumpridas, será chamado a função `atualizar_arq`, que irá atualizar o arquivo daquele labirinto em específico com as novas posições modificadas. <br>
-&nbsp; Caso não for a primeira vez que um labirinto está sendo percorrido, irá ser processada apenas a posição inicial dele, para em seguida verificar se ele foi zerada, utilizando a função `verificar_parada`. Essa função vai acessar o arquivo desse labirinto, transformando em tipo "int"" e fazendo um somatório de todos os elementos que estiverem marcados com "!", pois foram posições que foram descobertas e que continham pontos. Caso o somatório retornado por ela seja igual a zero, significa que esse labirinto já foi zerado, não sendo mais necessário caminhar por ele. Portanto, nesse caso, o while do caminhamento não será acessado e o viajante será transportado para o labirinto seguinte.<br>
+&nbsp; &nbsp; <b>Primeiro passo:</b> Será verificado se a posição inicial cumpre as condições previamente estabelecidas para início do jogo. Caso não cumpra, novas posições aleatórias serão geradas. A posição inicial será atualizada e as modificações serão registradas no arquivo "historico.data".<br>
+&nbsp; &nbsp;  <b>Segundo passo:</b> A função `atualizar_dados` será chamada para a posição inicial. Essa função é responsável por verificar o elemento presente na posição atual e realizar as modificações necessárias.<br>
+&nbsp; &nbsp; &nbsp;  -> Se o elemento for um perigo, será subtraído 1 da vida do viajante e a posição será marcada na matriz com ". *", indicando que ela foi descoberta..<br>
+&nbsp; &nbsp; &nbsp;  -> Se o elemento for um ponto a ser computado e seu valor for maior que zero, será adicionado 1 ao inventário do viajante e subtraído 1 do valor do ponto. Além disso, um ponto de exclamação será concatenado na frente do número na matriz, indicando que a posição foi descoberta. Por exemplo, se o elemento inicial for "4", após o caminhamento será registrado como "!3". Caso o número seja igual a zero, apenas será marcada a posição.<br>
+&nbsp; &nbsp; &nbsp;  -> Se o elemento for uma parede, será atualizado essa posição com ".#" , para que ela se dê como descoberta.<br>
+&nbsp; &nbsp; &nbsp;  -> Se o elemento já tiver sido descoberto anteriormente e tiver uma marcação de "." ou "!", apenas o valor da frente da marcação será lido e as modificações correspondentes serão realizadas.<br>
+&nbsp; &nbsp; &nbsp; Dessa forma, a posição inicial selecionada poderá reduzir a vida do viajante ou adicionar pontos ao seu inventário.<br>
+&nbsp; &nbsp; <b>Terceiro passo:</b> Após verificar e atualizar a posição inicial, procede-se ao processamento do restante do labirinto. Para isso, é implementado um loop (while) que continua até que as condições de troca de labirinto ou as condições de parada não sejam satisfeitas. Este loop é composto pelos seguintes procedimentos: <br>
+&nbsp; &nbsp; &nbsp; -> É verificado se o viajante está na última linha ou última coluna do labirinto. Caso seja verdadeiro, o loop é encerrado e o viajante é teletransportado para o próximo labirinto. Caso contrário, o loop continua normalmente com os próximos passos.<br>
+&nbsp; &nbsp; &nbsp;  -> Dentro de um do-while, é gerada uma posição aleatória para o viajante caminhar. O loop continua até que a posição gerada seja realizável, ou seja, não seja uma posição que não existe na matriz e não seja uma parede. Para isso, são utilizadas as funções `verif_possibilidade` e `verif_parede`.<br>
+&nbsp; &nbsp; &nbsp; -> Quando uma posição que possa ser caminhada é gerada, É chamada novamente a função `atualizar_dados`, e em seguida atualizado a linha e a coluna do labirinto para aquela posição.<br>
+&nbsp; &nbsp; &nbsp; -> Nas últimas linhas do while, é verificado se o inventário contém 4 pontos e se a vida do viajante não é 10. Se ambas as condições forem verdadeiras, a vida é aumentada em 1 e o loop continua.<br>
+&nbsp; &nbsp; <b>Quarto passo:</b> Após percorrer o labirinto, a função `atualizar_arq` será chamada para atualizar o arquivo daquele labirinto específico com as novas posições modificadas.<br>
+&nbsp; Se esse não for o primeiro caminhamento do labirinto, apenas a posição inicial será processada. Em seguida, a função `verificar_parada` será utilizada para verificar se o labirinto foi zerado. Essa função acessará o arquivo do labirinto e somará todos os elementos marcados com "!". Se o resultado dessa soma for igual a zero, o labirinto já terá sido zerado, e o loop while não será acessado, sendo o viajante teletransportado para o próximo labirinto.<br>
 &nbsp; Quando a função `caminhar_matriz` já tiver cumprido o seu papel, será incrementado 1 em um contador auxiliar, que irá ser responsável por monitorar quantas partidas ocorreram. Também será chamanda a função `verificar_parada`, onde o valor retornado será somado a uma variável tipo inteiro chamada "parada_total". <br>
-&nbsp; Toda vez que esse contador for igual a quantidade de matrizes que existem no "input.data", será conferido o valor da variável "parada_total". Caso o valor seja igual a zero, significa que todas as matrizes caminhadas foram zeradas, e o jogo foi vencido, caso contrário, a variável e o contador serão zerados para começarem a nova contagem.<br>
-&nbsp; O acesso aos arquivos individuais será feito utilizando como auxiliar esse mesmo contador para o acesso ao endereço. Exemplo:<br>
-&nbsp; &nbsp; &nbsp; string endereco_matrizes = "dataset/matriz" + to_string(cont) + ".data"<br>
-&nbsp; &nbsp; &nbsp; recarregar_matriz(matriz, tamanho, endereco_matrizes) <br>
-&nbsp; Quando o viajante morrer ou todos os caminhos forem zerados, será escrito no "historico.data" e printado para o usuário as seguintes informações: vida; inventário; perigos encontrados; elementos consumidos; quantidade de vezes caminhadas; caminhos totais descobertos; caminhos nao descobertos; elementos restantes para zerar o caminho.
-&nbsp; As informações de perigos encontrados, elementos consumidos e caminhos totais descobertos foram criadas utilizando a função `verificar_parada`, que também computa quantos elementos com os sinais de "." e "!" haviam nas matrizes.
+&nbsp; Toda vez que esse contador for igual à quantidade de matrizes que existem no "input.data", será conferido o valor da variável "parada_total". Caso o valor seja igual a zero, significa que todas as matrizes caminhadas foram zeradas, e o jogo foi vencido, caso contrário, a variável e o contador serão zerados para a nova contagem.<br>
+&nbsp; Para acessar os arquivos individuais, será utilizado o contador auxiliar para obter o endereço. Por exemplo: "string endereco_matrizes = 'dataset/matriz' + to_string(cont) + '.data'", e a função "recarregar_matriz" será chamada com o endereço correspondente.<br>
+&nbsp; Quando o viajante morrer ou todos os caminhos forem zerados, será escrito no "historico.data" e printado para o usuário as seguintes informações: vida; inventário; perigos encontrados; elementos consumidos; quantidade de vezes caminhadas; caminhos totais descobertos; caminhos nao descobertos; elementos restantes para zerar o caminho; tempo de execução.<br>
+&nbsp; As informações de perigos encontrados, elementos consumidos e caminhos totais descobertos foram criadas utilizando a função `verificar_parada`, que também computa quantos elementos com os sinais de "." e "!" haviam nas matrizes.<br>
 
 ## Custo Computacional
+Diante da impossibilidade de se calcular o custo computacional desse código, optou-se por realizar o cálculo do tempo de execução, o que proporciona uma medida aproximada do seu desempenho. Para isso, foi utilizada a biblioteca "time.h", realizando-se a subtração do tempo final pelo tempo inicial, e printando ao usuário o tempo de execução resultante.
+Após a realização de dez execuções, todas elas utilizando o mesmo arquivo de entrada,  o tempo de execução médio obtido foi de 0,491 segundos.<br>
 
 ## Conclusão
+O algoritmo aleatório demonstrou eficácia para solucionar a questão em pauta, simplificando, portanto, o processo de navegação pelo labirinto. Mas é importante ressaltar que esse tipo de algoritmo comporta alguns aspectos desfavoráveis, a exemplo da impossibilidade de calcular o custo computacional, ainda que haja sempre o mesmo número de entrada de dados, uma vez que cada experimento é independente do outro, ou seja, a ocorrência ou não do evento em um experimento não afeta a probabilidade de ocorrer em outro experimento, nos moldes do conceito de probabilidade de Bernoulli. Além disso, também se percebe certa dificuldade em se conceber novas otimizações sem retirar essa aleatoriedade.
+De maneira geral, através do programa foi possível explorar e conhecer novas técnicas de programação, além de pensar em estratégias que reduzam o custo computacional quando se trabalha com dados em arquivos.<br>
 
 ## Exemplos de execução
 
